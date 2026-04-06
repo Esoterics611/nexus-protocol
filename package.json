@@ -1,0 +1,35 @@
+{
+  "name": "nexus-protocol",
+  "version": "1.0.0",
+  "description": "Nexus Protocol — Institutional digital asset protocol suite: tokenized treasuries, stablecoin, derivatives",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "coverage": "hardhat coverage",
+    "deploy:local": "hardhat run scripts/deploy.ts",
+    "deploy:base-sepolia": "hardhat run scripts/deploy.ts --network baseSepolia",
+    "seed": "hardhat run scripts/seed.ts",
+    "docs:serve": "mkdocs serve -f docs-site/mkdocs.yml",
+    "docs:build": "mkdocs build -f docs-site/mkdocs.yml"
+  },
+  "keywords": [
+    "defi",
+    "tokenized-treasuries",
+    "stablecoin",
+    "erc4626"
+  ],
+  "author": "Ronnie Rendel",
+  "license": "MIT",
+  "type": "module",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox-viem": "^5.0.3",
+    "@openzeppelin/contracts": "^5.6.1",
+    "@openzeppelin/contracts-upgradeable": "^5.6.1",
+    "@types/node": "^25.5.0",
+    "dotenv": "^17.4.0",
+    "hardhat": "^3.3.0",
+    "puppeteer": "^24.40.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  }
+}

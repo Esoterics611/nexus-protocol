@@ -1,0 +1,27 @@
+# This file is superseded by the root docker-compose.yml which runs the full
+# services stack (postgres + indexer) together.
+#
+# Use from repo root:
+#   docker compose up -d
+#
+# This file is kept only as a reference for the postgres-only setup
+# used before the root compose was introduced.
+#
+# If you only want postgres (e.g. to run the indexer locally with hot-reload):
+#   docker compose -f services/indexer/docker-compose.yml up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: nexus
+      POSTGRES_PASSWORD: nexus
+      POSTGRES_DB: nexus_indexer
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./drizzle/0001_initial.sql:/docker-entrypoint-initdb.d/0001_initial.sql
+
+volumes:
+  pgdata:

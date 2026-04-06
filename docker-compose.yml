@@ -1,0 +1,170 @@
+# Nexus Protocol — Local Services Stack
+#
+# Starts the full off-chain infrastructure in a single command:
+#   docker compose up -d
+#
+# Services included:
+#   postgres  — shared database for all services
+#   indexer   — NestJS event indexer (polls Base Sepolia, writes to postgres)
+#
+# Placeholder services (uncomment as each is implemented):
+#   oracle-reporter   — Phase 3.4: automated NAV posting
+#   compliance-svc    — Phase 3.5: KYC webhook processing
+#   audit-reporter    — Phase 3.6: compliance event logging
+#   reconciler        — Phase 3.7: reserve vs supply checks
+#
+# Frontend runs outside Docker (Vite HMR):
+#   cd frontend && npm run dev
+
+# ── Shared network ───────────────────────────────────────────────
+networks:
+  nexus:
+    driver: bridge
+
+# ── Persistent volumes ───────────────────────────────────────────
+volumes:
+  pgdata:
+
+services:
+
+  # ── PostgreSQL ─────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nexus
+      POSTGRES_PASSWORD: nexus
+      POSTGRES_DB: nexus_indexer
+    ports:
+      - "5432:5432"                   # exposed so local npm run start:dev also works
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./services/indexer/drizzle/0001_initial.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./services/indexer/drizzle/0002_derivatives.sql:/docker-entrypoint-initdb.d/02_derivatives.sql
+    networks:
+      - nexus
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexus -d nexus_indexer"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ── Event Indexer ─────────────────────────────────────────────
+  indexer:
+    build:
+      context: ./services/indexer
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Database — uses service name, not localhost
+      DATABASE_URL: postgresql://nexus:nexus@postgres:5432/nexus_indexer
+
+      # Chain — publicnode is reliable for all contract sizes
+      RPC_URL: ${RPC_URL:-https://base-sepolia-rpc.publicnode.com}
+      CHAIN_ID: ${CHAIN_ID:-84532}
+
+      # Indexer config
+      POLL_INTERVAL_MS: ${POLL_INTERVAL_MS:-12000}
+      # Phase 1 deploy block (2026-04-05); Phase 2 deploys shortly after
+      START_BLOCK: ${START_BLOCK:-39778000}
+
+      # Phase 1 contract addresses (Base Sepolia — 2026-04-05)
+      STABLECOIN_ADDRESS: ${STABLECOIN_ADDRESS:-0x82671ab3119c8f73acc0ee43c6b167b46b948141}
+      MINT_CONTROLLER_ADDRESS: ${MINT_CONTROLLER_ADDRESS:-0xee9b15f35ea7a9920c38ac1aacd5af265931886a}
+      NAV_ORACLE_ADDRESS: ${NAV_ORACLE_ADDRESS:-0x28dc5ccc6a97675b7def7b4c4179b85127b698f3}
+      VAULT_FACTORY_ADDRESS: ${VAULT_FACTORY_ADDRESS:-0x7802ee123ef4a834987f69ed020da67881ce86b0}
+      YIELD_VAULT_ADDRESS: ${YIELD_VAULT_ADDRESS:-0x6671D7937ae8b9120A673724FD26CF06e61b4F67}
+      RESERVE_TRACKER_ADDRESS: ${RESERVE_TRACKER_ADDRESS:-0x9e9abd3734140eb7de220e190cc63436405ab219}
+      AUDIT_LOG_ADDRESS: ${AUDIT_LOG_ADDRESS:-0xbf2f6169366b4971b6a1918af34b13f04ad1cc2c}
+      RESTRICTION_LIST_ADDRESS: ${RESTRICTION_LIST_ADDRESS:-0xea1ea3239ac1731acb6cffbe666fa6ff55e5a669}
+      KYC_REGISTRY_ADDRESS: ${KYC_REGISTRY_ADDRESS:-0xadac3b940503626d5c72e202bf165c572d3ea11a}
+      ACCREDITED_INVESTOR_ADDRESS: ${ACCREDITED_INVESTOR_ADDRESS:-0xd30fc13df30b31bc6d4c5fe7e3ee3877093fcf31}
+      TRANSFER_RESTRICTIONS_ADDRESS: ${TRANSFER_RESTRICTIONS_ADDRESS:-0xbaa4050fef138f3f9dc19373db6b57860059c5a9}
+      # Phase 2 derivative addresses (Base Sepolia — 2026-04-06)
+      YIELD_SPLITTER_ADDRESS: ${YIELD_SPLITTER_ADDRESS:-0xad9ba23e6a968b118eddbd15524bec1291f2889d}
+      CREDIT_VAULT_ADDRESS: ${CREDIT_VAULT_ADDRESS:-0xe5f0b28b2236c2249074e2a22636e418b249b321}
+    ports:
+      - "3001:3001"
+    networks:
+      - nexus
+
+  # ── Oracle Reporter (Phase 3.4) ────────────────────────────────
+  # Polls a price source and posts daily NAV to the NAVOracle contract.
+  # Requires: REPORTER_PRIVATE_KEY set in .env (wallet must have REPORTER_ROLE)
+  oracle-reporter:
+    build:
+      context: ./services/oracle-reporter
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      RPC_URL: ${RPC_URL:-https://base-sepolia-rpc.publicnode.com}
+      CHAIN_ID: ${CHAIN_ID:-84532}
+      REPORTER_PRIVATE_KEY: ${REPORTER_PRIVATE_KEY}   # set in .env — never commit
+      NAV_ORACLE_ADDRESS: ${NAV_ORACLE_ADDRESS:-0x28dc5ccc6a97675b7def7b4c4179b85127b698f3}
+      YIELD_VAULT_ADDRESS: ${YIELD_VAULT_ADDRESS:-0x6671D7937ae8b9120A673724FD26CF06e61b4F67}
+      PRICE_ADAPTER: ${PRICE_ADAPTER:-mock}
+      POST_INTERVAL_MS: ${POST_INTERVAL_MS:-86400000}  # once per day
+    ports:
+      - "3002:3002"
+    networks:
+      - nexus
+
+  # ── Compliance Service (Phase 3.5 — NOT YET IMPLEMENTED) ──────
+  # Handles KYC webhook ingestion and accreditation workflows.
+  #
+  # compliance-svc:
+  #   build:
+  #     context: ./services/compliance
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   environment:
+  #     DATABASE_URL: postgresql://nexus:nexus@postgres:5432/nexus_indexer
+  #     RPC_URL: ${RPC_URL:-https://base-sepolia.drpc.org}
+  #     KYC_PROVIDER: mock                              # mock | jumio | onfido
+  #     KYC_WEBHOOK_SECRET: ${KYC_WEBHOOK_SECRET}
+  #   ports:
+  #     - "3002:3002"
+  #   networks:
+  #     - nexus
+
+  # ── Audit Reporter (Phase 3.6 — NOT YET IMPLEMENTED) ──────────
+  # Writes AuditLog entries for compliance events.
+  #
+  # audit-reporter:
+  #   build:
+  #     context: ./services/audit-reporter
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   environment:
+  #     DATABASE_URL: postgresql://nexus:nexus@postgres:5432/nexus_indexer
+  #     RPC_URL: ${RPC_URL:-https://base-sepolia.drpc.org}
+  #   networks:
+  #     - nexus
+
+  # ── Reconciliation Service (Phase 3.7 — NOT YET IMPLEMENTED) ──
+  # Checks on-chain reserve vs NUSD supply, alerts on discrepancy.
+  #
+  # reconciler:
+  #   build:
+  #     context: ./services/reconciler
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   environment:
+  #     DATABASE_URL: postgresql://nexus:nexus@postgres:5432/nexus_indexer
+  #     RPC_URL: ${RPC_URL:-https://base-sepolia.drpc.org}
+  #     ALERT_WEBHOOK: ${ALERT_WEBHOOK}                 # Slack/PagerDuty webhook
+  #     RESERVE_DRIFT_THRESHOLD_PCT: 5
+  #   networks:
+  #     - nexus

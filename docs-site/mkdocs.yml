@@ -1,0 +1,87 @@
+site_name: Nexus Protocol — Institutional Documentation
+site_description: Internal documentation for Nexus Protocol institutional digital asset platform
+site_url: https://docs.nexusprotocol.io
+
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - toc.integrate
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home:
+    - Overview: index.md
+    - Getting Started: getting-started.md
+
+  - Sales & Trading:
+    - Overview: sales-trading/index.md
+    - Product Catalog: sales-trading/products.md
+    - Yield Strategies: sales-trading/yield-strategies.md
+    - Pricing & NAV: sales-trading/pricing.md
+    - Client Pitches: sales-trading/client-pitches.md
+
+  - Compliance:
+    - Overview: compliance/index.md
+    - Access Control & Roles: compliance/access-control.md
+    - KYC & AML: compliance/kyc-aml.md
+    - Transfer Restrictions: compliance/transfer-restrictions.md
+    - Audit Trail: compliance/audit-trail.md
+    - Regulatory Controls: compliance/regulatory-controls.md
+
+  - Developers:
+    - Overview: developers/index.md
+    - Architecture: developers/architecture.md
+    - Contract Reference: developers/contracts-reference.md
+    - Deployment Guide: developers/deployment-guide.md
+    - Integration Guide: developers/integration-guide.md
+    - Testing: developers/testing.md
+    - API Reference: developers/api-reference.md
+
+  - Legal & Regulatory:
+    - Overview: legal-regulatory/index.md
+    - Token Classification: legal-regulatory/token-classification.md
+    - Smart Contract Risks: legal-regulatory/smart-contract-risks.md
+    - Reserve Transparency: legal-regulatory/reserve-transparency.md
+    - Governance: legal-regulatory/governance.md
