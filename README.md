@@ -413,3 +413,86 @@ See [`docs/PHASE_TRACKER.md`](docs/PHASE_TRACKER.md) for detailed progress.
 | [`docs/CONTRACT_REGISTRY.md`](docs/CONTRACT_REGISTRY.md) | Contracts, roles, wiring order |
 | [`docs/E2E_WORKFLOWS.md`](docs/E2E_WORKFLOWS.md) | End-to-end call sequences |
 | [`docs/INTEGRATION_ROADMAP.md`](docs/INTEGRATION_ROADMAP.md) | 9 institutional integration points |
+
+---
+
+## Documentation & Training Material
+
+The `docs-site/` directory contains a full MkDocs knowledge base organized by role.
+It covers the protocol from four angles: what to sell, how to stay compliant, how to build on it, and how it fits into the regulatory landscape.
+
+### Serve the docs site locally
+
+```bash
+cd docs-site
+pip install -r requirements.txt   # one-time: mkdocs-material + plugins
+mkdocs serve                      # → http://127.0.0.1:8000
+```
+
+### Sales & Trading — [`docs-site/docs/sales-trading/`](docs-site/docs/sales-trading/)
+
+For sales teams, relationship managers, and investor-facing staff.
+
+| Document | What it covers |
+|----------|---------------|
+| [Overview](docs-site/docs/sales-trading/index.md) | Protocol positioning, target segments, and revenue model |
+| [Product Catalog](docs-site/docs/sales-trading/products.md) | All live and planned products: NUSD, nxTREASURY vault, PT/YT, Credit Vault, ETF Wrapper |
+| [Yield Strategies](docs-site/docs/sales-trading/yield-strategies.md) | T-bill yield pass-through, yield stripping mechanics, tranching, and credit strategies |
+| [Pricing & NAV](docs-site/docs/sales-trading/pricing.md) | How NAV is calculated and published, vault share pricing, and NUSD peg mechanics |
+| [Client Pitches](docs-site/docs/sales-trading/client-pitches.md) | Objection handling, competitive positioning, and sample talking points by client type |
+
+### Compliance — [`docs-site/docs/compliance/`](docs-site/docs/compliance/)
+
+For compliance officers, legal counsel, and operations staff managing regulated flows.
+
+| Document | What it covers |
+|----------|---------------|
+| [Overview](docs-site/docs/compliance/index.md) | On-chain compliance architecture and the role of each control |
+| [Access Control & Roles](docs-site/docs/compliance/access-control.md) | Every `AccessControl` role across all contracts, who holds it, and what it grants |
+| [KYC & AML](docs-site/docs/compliance/kyc-aml.md) | KYCRegistry and AccreditedInvestor contracts, onboarding flow, and verification lifecycle |
+| [Transfer Restrictions](docs-site/docs/compliance/transfer-restrictions.md) | RestrictionList (denylist) + TransferRestrictions gate, how they compose on vault and stablecoin transfers |
+| [Audit Trail](docs-site/docs/compliance/audit-trail.md) | AuditLog contract, what gets logged, and how to query the immutable on-chain record |
+| [Regulatory Controls](docs-site/docs/compliance/regulatory-controls.md) | Pause, denylist, UUPS upgradeability, and sanctions screening runbook |
+
+### Developers — [`docs-site/docs/developers/`](docs-site/docs/developers/)
+
+For engineers integrating with or extending the protocol.
+
+| Document | What it covers |
+|----------|---------------|
+| [Overview](docs-site/docs/developers/index.md) | Tech stack, repo layout, and how the layers connect |
+| [Architecture](docs-site/docs/developers/architecture.md) | Contract interaction diagrams, data flow, and service dependencies |
+| [Contract Reference](docs-site/docs/developers/contracts-reference.md) | Every public function, event, and error across all contracts |
+| [Deployment Guide](docs-site/docs/developers/deployment-guide.md) | Step-by-step deploy to Base Sepolia and mainnet, gas table, nonce pitfalls |
+| [Integration Guide](docs-site/docs/developers/integration-guide.md) | How to integrate NUSD, vaults, and compliance hooks into external systems |
+| [Testing](docs-site/docs/developers/testing.md) | Test layout, how to run coverage, fork-testing patterns |
+| [API Reference](docs-site/docs/developers/api-reference.md) | Full REST spec for the Event Indexer and Oracle Reporter services |
+
+### Legal & Regulatory — [`docs-site/docs/legal-regulatory/`](docs-site/docs/legal-regulatory/)
+
+For legal teams, auditors, and institutional counterparties conducting due diligence.
+
+| Document | What it covers |
+|----------|---------------|
+| [Overview](docs-site/docs/legal-regulatory/index.md) | Regulatory positioning and jurisdiction considerations |
+| [Token Classification](docs-site/docs/legal-regulatory/token-classification.md) | How NUSD and vault shares are characterized under US and EU frameworks |
+| [Smart Contract Risks](docs-site/docs/legal-regulatory/smart-contract-risks.md) | Disclosed risks, upgrade mechanism, and admin key controls |
+| [Reserve Transparency](docs-site/docs/legal-regulatory/reserve-transparency.md) | On-chain reserve proofs, ReserveTracker contract, and attestation model |
+| [Governance](docs-site/docs/legal-regulatory/governance.md) | NexusGovernor + Timelock architecture, proposal lifecycle, and veto rights |
+
+### Engineering Reference — [`docs/`](docs/)
+
+Internal working documents for the engineering and operations team.
+
+| Document | What it covers |
+|----------|---------------|
+| [`ARCHITECTURE.md`](docs/ARCHITECTURE.md) | System architecture, contract relationships, and layering principles |
+| [`BUSINESS_PLAN.md`](docs/BUSINESS_PLAN.md) | Commercial model, target markets, and go-to-market roadmap |
+| [`CONTRACT_REGISTRY.md`](docs/CONTRACT_REGISTRY.md) | All deployed addresses, roles held, and wiring order |
+| [`DERIVATIVES_PLAN.md`](docs/DERIVATIVES_PLAN.md) | Phase 2 derivatives design: PT/YT splitting, Credit Vault, ETF Wrapper |
+| [`DEVELOPER_REFERENCE.md`](docs/DEVELOPER_REFERENCE.md) | Canonical type definitions, interfaces, and cross-layer API contracts |
+| [`E2E_WORKFLOWS.md`](docs/E2E_WORKFLOWS.md) | 7 end-to-end call sequences with exact function signatures and expected state |
+| [`INTEGRATION_ROADMAP.md`](docs/INTEGRATION_ROADMAP.md) | 9 institutional integration points with partner research and next steps |
+| [`OPS_GUIDE.md`](docs/OPS_GUIDE.md) | Production runbook: startup, monitoring, recovery, DB access |
+| [`PHASE_TRACKER.md`](docs/PHASE_TRACKER.md) | Granular implementation progress across all phases |
+| [`TESTING_GUIDE.md`](docs/TESTING_GUIDE.md) | Test strategy, coverage targets, and how to run the full suite |
