@@ -92,11 +92,35 @@ graph TB
 
 ---
 
-## Who Is This Documentation For?
+## Documentation
 
-| Audience | Start Here |
-|----------|-----------|
-| **Sales & Trading** | [Product Catalog](sales-trading/products.md) and [Yield Strategies](sales-trading/yield-strategies.md) |
-| **Compliance** | [Access Control](compliance/access-control.md) and [KYC/AML](compliance/kyc-aml.md) |
-| **Developers** | [Architecture](developers/architecture.md) and [Contract Reference](developers/contracts-reference.md) |
-| **Legal & Regulators** | [Token Classification](legal-regulatory/token-classification.md) and [Reserve Transparency](legal-regulatory/reserve-transparency.md) |
+### Sales & Trading
+- [Overview](sales-trading/index.md)
+- [Product Catalog](sales-trading/products.md)
+- [Yield Strategies](sales-trading/yield-strategies.md)
+- [Pricing & NAV](sales-trading/pricing.md)
+- [Client Pitches](sales-trading/client-pitches.md)
+
+### Compliance
+- [Overview](compliance/index.md)
+- [Access Control & Roles](compliance/access-control.md)
+- [KYC & AML](compliance/kyc-aml.md)
+- [Transfer Restrictions](compliance/transfer-restrictions.md)
+- [Audit Trail](compliance/audit-trail.md)
+- [Regulatory Controls](compliance/regulatory-controls.md)
+
+### Developers
+- [Overview](developers/index.md)
+- [Architecture](developers/architecture.md)
+- [Contract Reference](developers/contracts-reference.md)
+- [Deployment Guide](developers/deployment-guide.md)
+- [Integration Guide](developers/integration-guide.md)
+- [Testing](developers/testing.md)
+- [API Reference](developers/api-reference.md)
+
+### Legal & Regulatory
+- [Overview](legal-regulatory/index.md)
+- [Token Classification](legal-regulatory/token-classification.md)
+- [Smart Contract Risks](legal-regulatory/smart-contract-risks.md)
+- [Reserve Transparency](legal-regulatory/reserve-transparency.md)
+- [Governance](legal-regulatory/governance.md)

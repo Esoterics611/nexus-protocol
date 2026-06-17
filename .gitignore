@@ -1,5 +1,6 @@
 node_modules
 .env
+.env.local
 cache
 artifacts
 dist
@@ -7,3 +8,13 @@ coverage
 coverage.json
 typechain-types
 *.log
+
+# Claude Code local settings (personal permissions config)
+.claude/settings.local.json
+
+# Built documentation site (generated output)
+docs-site/site/
+
+# OS
+.DS_Store
+Thumbs.db
