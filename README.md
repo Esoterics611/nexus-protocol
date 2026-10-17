@@ -1,5 +1,7 @@
 # Nexus Protocol
 
+[![Contract tests](https://github.com/Esoterics611/nexus-protocol/actions/workflows/test.yml/badge.svg)](https://github.com/Esoterics611/nexus-protocol/actions/workflows/test.yml)
+
 Institutional digital asset protocol suite: tokenized treasury vaults (ERC-4626), NUSD stablecoin (UUPS upgradeable), compliance layer, and off-chain services.
 
 | | |
